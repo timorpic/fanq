@@ -251,6 +251,15 @@ function startSpaceSynth(ctx, targetNode) {
  * 5. MECHANICAL KEYBOARD CLICK SYNTHESIZER
  * Triggered on keydown. Note that this doesn't run a continuous loop.
  */
+let activeKeyboardAxis = 'blue';
+
+export function setKeyboardAxis(axis) {
+  if (['blue', 'tea', 'red'].includes(axis)) {
+    activeKeyboardAxis = axis;
+  }
+  return activeKeyboardAxis;
+}
+
 export function playKeyboardClick() {
   const track = synthTracks.keyboard;
   if (!track.active || isMutedAll) return;
@@ -258,43 +267,99 @@ export function playKeyboardClick() {
   const ctx = getAudioContext();
   const now = ctx.currentTime;
 
-  const osc = ctx.createOscillator();
-  const clickGain = ctx.createGain();
-  
-  osc.type = 'triangle';
-  // Fast frequency sweep down
-  osc.frequency.setValueAtTime(1100 + Math.random() * 400, now);
-  osc.frequency.exponentialRampToValueAtTime(80, now + 0.035);
-
-  clickGain.gain.setValueAtTime(track.volume * 0.15, now);
-  clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
-
-  osc.connect(clickGain);
-  clickGain.connect(track.gainNode);
-  
-  osc.start(now);
-  osc.stop(now + 0.05);
-
-  // Tiny mechanical switch click crackle (high-pass sawtooth)
-  const click = ctx.createOscillator();
-  const filter = ctx.createBiquadFilter();
-  const gain = ctx.createGain();
-
-  click.type = 'sawtooth';
-  click.frequency.setValueAtTime(4500, now);
-
-  filter.type = 'highpass';
-  filter.frequency.setValueAtTime(3500, now);
-
-  gain.gain.setValueAtTime(track.volume * 0.04, now);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.006);
-
-  click.connect(filter);
-  filter.connect(gain);
-  gain.connect(track.gainNode);
-
-  click.start(now);
-  click.stop(now + 0.01);
+  if (activeKeyboardAxis === 'blue') {
+    // Blue Switch: High pitched click + sharp metallic click snap
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(1250 + Math.random() * 250, now);
+    osc.frequency.exponentialRampToValueAtTime(160, now + 0.025);
+    
+    gain.gain.setValueAtTime(track.volume * 0.14, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+    
+    osc.connect(gain);
+    gain.connect(track.gainNode);
+    osc.start(now);
+    osc.stop(now + 0.04);
+    
+    // Metallic spring tick click
+    const tick = ctx.createOscillator();
+    const tickFilter = ctx.createBiquadFilter();
+    const tickGain = ctx.createGain();
+    
+    tick.type = 'sawtooth';
+    tick.frequency.setValueAtTime(4800, now);
+    
+    tickFilter.type = 'highpass';
+    tickFilter.frequency.setValueAtTime(3800, now);
+    
+    tickGain.gain.setValueAtTime(track.volume * 0.04, now);
+    tickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.005);
+    
+    tick.connect(tickFilter);
+    tickFilter.connect(tickGain);
+    tickGain.connect(track.gainNode);
+    tick.start(now);
+    tick.stop(now + 0.01);
+    
+  } else if (activeKeyboardAxis === 'red') {
+    // Red Switch: Linear, thocky, low frequency
+    const osc = ctx.createOscillator();
+    const filter = ctx.createBiquadFilter();
+    const gain = ctx.createGain();
+    
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(420 + Math.random() * 80, now);
+    osc.frequency.exponentialRampToValueAtTime(50, now + 0.045);
+    
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(320, now); // Deep muffle
+    
+    gain.gain.setValueAtTime(track.volume * 0.38, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+    
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(track.gainNode);
+    osc.start(now);
+    osc.stop(now + 0.07);
+    
+  } else if (activeKeyboardAxis === 'tea') {
+    // Tea Switch: Muted tactile feel, medium pitch, moderate snap
+    const osc = ctx.createOscillator();
+    const filter = ctx.createBiquadFilter();
+    const gain = ctx.createGain();
+    
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(680 + Math.random() * 120, now);
+    osc.frequency.exponentialRampToValueAtTime(90, now + 0.038);
+    
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(750, now);
+    
+    gain.gain.setValueAtTime(track.volume * 0.22, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+    
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(track.gainNode);
+    osc.start(now);
+    osc.stop(now + 0.06);
+    
+    // Soft release transient tick
+    const click = ctx.createOscillator();
+    const clickGain = ctx.createGain();
+    click.type = 'sine';
+    click.frequency.setValueAtTime(2000, now);
+    clickGain.gain.setValueAtTime(track.volume * 0.015, now);
+    clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.008);
+    click.connect(clickGain);
+    clickGain.connect(track.gainNode);
+    click.start(now);
+    click.stop(now + 0.01);
+  }
 }
 
 /**

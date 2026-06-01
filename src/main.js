@@ -4,7 +4,8 @@ import {
   updateVolume, 
   toggleMuteAll, 
   playCompletionBell, 
-  getAudioContext 
+  getAudioContext,
+  setKeyboardAxis
 } from './soundboard.js';
 import { 
   recordPomodoro, 
@@ -40,6 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const todayCountDisplay = document.getElementById('today-count');
   const weeklyChartSvg = document.getElementById('weekly-chart');
   const breathingCircle = document.getElementById('breathing-circle');
+
+  // E-Ink Theme & Keyboard Axis selector elements
+  const btnThemeEink = document.getElementById('btn-theme-eink');
+  const axisBtns = document.querySelectorAll('.axis-btn');
+
+  // Focus Completion Card Modal elements
+  const completionModal = document.getElementById('completion-modal');
+  const btnCloseModal = document.getElementById('btn-close-modal');
+  const modalInputNote = document.getElementById('modal-input-note');
+  const cardNotePreview = document.getElementById('card-note-preview');
+  const cardDate = document.getElementById('card-date');
+  const cardStatsSessions = document.getElementById('card-stats-sessions');
+  const cardSoundboardMix = document.getElementById('card-soundboard-mix');
+  const btnExportCard = document.getElementById('btn-export-card');
 
   // --- Initializing Circular Progress Ring Styles ---
   if (progressRing) {
@@ -110,6 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (mode === TIMER_MODES.FOCUS) {
         recordPomodoro();
         updateStatsUI();
+        // Open achievement card modal
+        setTimeout(showCompletionModal, 1000);
       }
     },
     
@@ -234,4 +251,169 @@ document.addEventListener('DOMContentLoaded', () => {
       updateStatsUI();
     }
   });
+
+  // --- E-Ink Theme Switch Event ---
+  btnThemeEink.addEventListener('click', () => {
+    document.body.classList.toggle('theme-eink');
+    const isEink = document.body.classList.contains('theme-eink');
+    btnThemeEink.innerHTML = isEink ? '<i class="fa-solid fa-lightbulb"></i>' : '<i class="fa-solid fa-book-open"></i>';
+  });
+
+  // --- Keyboard Switch Selector Event ---
+  axisBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Avoid triggering main keyboard track play click
+      getAudioContext();
+      
+      const axis = e.currentTarget.dataset.axis;
+      setKeyboardAxis(axis);
+      
+      // Toggle CSS selection styling
+      axisBtns.forEach(b => b.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+    });
+  });
+
+  // --- Completion Modal Event Bindings & Live Previews ---
+  
+  function showCompletionModal() {
+    const today = new Date();
+    if (cardDate) {
+      cardDate.textContent = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
+    }
+    
+    const todayCount = getTodayCount();
+    if (cardStatsSessions) {
+      cardStatsSessions.textContent = `完成了今日第 ${todayCount} 个番茄钟`;
+    }
+    
+    // Fetch active soundboard recipes
+    const activeMix = [];
+    document.querySelectorAll('.sound-track.playing').forEach(track => {
+      const name = track.querySelector('.track-info span').textContent;
+      activeMix.push(name);
+    });
+    if (cardSoundboardMix) {
+      cardSoundboardMix.textContent = activeMix.length > 0 ? `配方: ${activeMix.join(' + ')}` : '配方: 绝对静音';
+    }
+    
+    if (modalInputNote) {
+      modalInputNote.value = '';
+    }
+    if (cardNotePreview) {
+      cardNotePreview.textContent = '我今天又变强了';
+    }
+    
+    if (completionModal) {
+      completionModal.classList.add('active');
+    }
+  }
+
+  // Live note keyboard input reflection
+  modalInputNote.addEventListener('input', (e) => {
+    const val = e.target.value.trim();
+    if (cardNotePreview) {
+      cardNotePreview.textContent = val ? `“${val}”` : '我今天又变强了';
+    }
+  });
+
+  // Close modal click
+  btnCloseModal.addEventListener('click', () => {
+    if (completionModal) {
+      completionModal.classList.remove('active');
+    }
+  });
+
+  // Canvas-based Polaroid card generation and download
+  btnExportCard.addEventListener('click', () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 400;
+    canvas.height = 520;
+    const ctx = canvas.getContext('2d');
+    
+    // 1. Polaroid White background card body
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 400, 520);
+    
+    // Card outer border
+    ctx.strokeStyle = '#e1e1de';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(4, 4, 392, 512);
+    
+    // 2. Card Header
+    ctx.fillStyle = '#8c8c8c';
+    ctx.font = 'bold 11px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('ZENSPACE FOCUS', 200, 28);
+    
+    // 3. Photo Frame (340x280) from x=30, y=40
+    const frameGrad = ctx.createLinearGradient(30, 40, 370, 320);
+    frameGrad.addColorStop(0, '#1c1d27');
+    frameGrad.addColorStop(1, '#0e0f14');
+    ctx.fillStyle = frameGrad;
+    ctx.fillRect(30, 40, 340, 280);
+    
+    // 4. Large centered Emoji
+    ctx.font = '80px system-ui, sans-serif';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🧘', 200, 160);
+    
+    // 5. Date stamp bottom-right
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.font = 'bold 12px monospace';
+    ctx.textAlign = 'right';
+    const dateStr = cardDate ? cardDate.textContent : new Date().toLocaleDateString();
+    ctx.fillText(dateStr, 355, 305);
+    
+    // 6. User Note (centered Georgia font)
+    ctx.fillStyle = '#1a1a1a';
+    ctx.font = 'italic bold 18px Georgia, serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    const rawNote = modalInputNote ? modalInputNote.value.trim() : '';
+    const noteStr = rawNote ? `“${rawNote}”` : '“我今天又变强了”';
+    
+    if (noteStr.length <= 18) {
+      ctx.fillText(noteStr, 200, 375);
+    } else {
+      ctx.fillText(noteStr.slice(0, 18), 200, 362);
+      ctx.fillText(noteStr.slice(18), 200, 388);
+    }
+    
+    // 7. Dashed line divider
+    ctx.strokeStyle = '#e1e1de';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(30, 420);
+    ctx.lineTo(370, 420);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // 8. Footers
+    ctx.fillStyle = '#7c7c7a';
+    ctx.font = '600 12px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'left';
+    const statsStr = cardStatsSessions ? cardStatsSessions.textContent : '完成了今日专注';
+    ctx.fillText(statsStr, 30, 452);
+    
+    const mixStr = cardSoundboardMix ? cardSoundboardMix.textContent : '配方: 绝对静音';
+    ctx.fillText(mixStr, 30, 482);
+    
+    // 9. Download trigger
+    const dataUrl = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    const cleanNote = rawNote ? rawNote.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_') : 'focus';
+    link.download = `zenspace-${cleanNote}-${dateStr.replace(/\./g, '-')}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Close modal after saving
+    if (completionModal) {
+      completionModal.classList.remove('active');
+    }
+  });
 });
+

@@ -748,3 +748,348 @@ body.mode-long-break .breathing-circle {
   }
 }
 
+/* ==========================================================================
+   E-INK PAPER THEME OVERRIDES
+   ========================================================================== */
+body.theme-eink {
+  --bg-dark: #fcfcfb;
+  --card-bg: #ffffff;
+  --card-border: #000000;
+  --text-primary: #121212;
+  --text-muted: #4b5563;
+  --accent-color: #000000;
+  --accent-rgb: 0, 0, 0;
+  --glow-color: transparent;
+  --shadow-main: none;
+}
+
+body.theme-eink .aurora-container {
+  display: none; /* Hide fluid gradients altogether */
+}
+
+body.theme-eink .dashboard-card {
+  border: 2px solid #000000;
+  box-shadow: 6px 6px 0px #000000; /* Brutalist E-Ink look */
+  background: #ffffff;
+}
+
+body.theme-eink .mode-nav {
+  background: #f0f0ed;
+  border: 1px solid #1a1a1a;
+}
+
+body.theme-eink .mode-tab.active {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+body.theme-eink .btn-primary {
+  background: #000000;
+  color: #ffffff;
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+}
+
+body.theme-eink .btn-primary:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+body.theme-eink .glass-subcard {
+  background: #ffffff;
+  border: 2px solid #000000;
+}
+
+body.theme-eink .sound-track {
+  background: #ffffff;
+  border: 1px solid #c8c8c5;
+}
+
+body.theme-eink .sound-track.playing {
+  border: 2px solid #000000;
+  background: #f9f9f6;
+}
+
+body.theme-eink .progress-ring-bar {
+  filter: none;
+}
+
+body.theme-eink .chart-bar {
+  fill: #e1e1de;
+  stroke: #1a1a1a;
+  stroke-width: 1px;
+}
+
+body.theme-eink .chart-bar.current-day {
+  fill: #000000;
+  filter: none;
+}
+
+/* Serif font for E-Ink paper look */
+body.theme-eink .countdown-digits,
+body.theme-eink h1,
+body.theme-eink h2,
+body.theme-eink h3,
+body.theme-eink .card-note {
+  font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+/* ==========================================================================
+   KEYBOARD WORKSHOP STYLES
+   ========================================================================== */
+.keyboard-switch-selector {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+  margin: 0 8px;
+}
+
+.axis-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font-family-sans);
+  transition: var(--transition-fast);
+}
+
+.axis-btn:hover {
+  color: var(--text-primary);
+}
+
+.axis-btn.active {
+  background: var(--accent-color);
+  color: #000000;
+}
+
+body.theme-eink .keyboard-switch-selector {
+  background: #f0f0ed;
+  border: 1px solid #1a1a1a;
+}
+
+body.theme-eink .axis-btn.active {
+  background: #000000;
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   COMPLETION MODAL & POLAROID UI
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: rgba(20, 22, 33, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-main);
+  border-radius: 24px;
+  width: 90%;
+  max-width: 440px;
+  padding: 28px;
+  transform: translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-overlay.active .modal-card {
+  transform: translateY(0);
+}
+
+body.theme-eink .modal-card {
+  background: #ffffff;
+  border: 2px solid #000000;
+  box-shadow: 6px 6px 0px #000000;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.modal-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+body.theme-eink .modal-header h3 {
+  color: #000000;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.modal-close-btn:hover {
+  color: #ffffff;
+}
+
+body.theme-eink .modal-close-btn:hover {
+  color: #000000;
+}
+
+.modal-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+#modal-input-note {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-family: var(--font-family-sans);
+  border-radius: 12px;
+  outline: none;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  transition: border-color 0.2s;
+}
+
+#modal-input-note:focus {
+  border-color: var(--accent-color);
+}
+
+body.theme-eink #modal-input-note {
+  background: #ffffff;
+  border: 2px solid #000000;
+  color: #000000;
+}
+
+.polaroid-preview-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 0;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+body.theme-eink .polaroid-preview-box {
+  background: #f0f0ed;
+  border: 1px solid #1a1a1a;
+}
+
+.polaroid-card-ui {
+  width: 250px;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px 16px 20px 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: #121212;
+  display: flex;
+  flex-direction: column;
+  transform: rotate(-1.5deg);
+  transition: transform 0.2s;
+}
+
+.polaroid-card-ui:hover {
+  transform: rotate(0) scale(1.02);
+}
+
+.card-title {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #8c8c8c;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.card-inner-photo {
+  height: 160px;
+  background: #1a1b24;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.photo-emoji {
+  font-size: 4rem;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+  animation: float-emoji 3s infinite ease-in-out;
+}
+
+@keyframes float-emoji {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.photo-date {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: var(--font-family-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.card-note {
+  font-family: Georgia, serif;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 700;
+  text-align: center;
+  color: #1a1a1a;
+  line-height: 1.3;
+  margin-bottom: 12px;
+  min-height: 28px;
+  word-break: break-word;
+}
+
+.card-footer-info {
+  border-top: 1px dashed #e1e1de;
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #7c7c7a;
+}
+
+

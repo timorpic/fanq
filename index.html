@@ -35,6 +35,9 @@
           <h1>琉璃番茄钟 <span>ZenSpace</span></h1>
         </div>
         <div class="header-controls">
+          <button id="btn-theme-eink" class="control-icon-btn" title="切换墨水屏墨纸模式">
+            <i class="fa-solid fa-book-open"></i>
+          </button>
           <button id="btn-mute-all" class="control-icon-btn" title="一键静音">
             <i class="fa-solid fa-volume-high"></i>
           </button>
@@ -169,6 +172,12 @@
                     <i class="fa-solid fa-keyboard track-icon"></i>
                     <span>机械打字</span>
                   </div>
+                  <!-- Keyboard Switch Axis selector -->
+                  <div class="keyboard-switch-selector">
+                    <button class="axis-btn active" data-axis="blue" title="青轴 (清脆段落)">青</button>
+                    <button class="axis-btn" data-axis="tea" title="茶轴 (微段落)">茶</button>
+                    <button class="axis-btn" data-axis="red" title="红轴 (静音线性)">红</button>
+                  </div>
                   <button class="track-toggle" aria-label="播放键盘音">
                     <i class="fa-solid fa-play"></i>
                   </button>
@@ -218,6 +227,41 @@
       </div>
 
     </main>
+  </div>
+
+  <!-- Focus Completion Polaroid Modal Overlay -->
+  <div id="completion-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🎉 恭喜完成专注！</h3>
+        <button id="btn-close-modal" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">写下这枚“专注胶囊”的标记，生成你的成就卡片：</p>
+        <input type="text" id="modal-input-note" placeholder="我刚刚完成了什么？（例如：编写代码、阅读图书）" maxLength="35">
+        
+        <!-- Polaroid Card Design Preview UI -->
+        <div class="polaroid-preview-box">
+          <div id="polaroid-card" class="polaroid-card-ui">
+            <h4 class="card-title">ZENSPACE FOCUS</h4>
+            <div class="card-inner-photo">
+              <div class="photo-emoji">🧘</div>
+              <div id="card-date" class="photo-date">2026.06.01</div>
+            </div>
+            <div id="card-note-preview" class="card-note">我今天又变强了</div>
+            <div class="card-footer-info">
+              <div id="card-stats-sessions">完成了今日第 1 个番茄钟</div>
+              <div id="card-soundboard-mix">配方: 禅意 Lofi + 松涛微风</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-export-card" class="btn btn-primary">
+          <i class="fa-solid fa-download"></i> 导出拍立得卡片
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Audio scripts & Application Entrance -->
