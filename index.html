@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>琉璃番茄钟 - Glassmorphic Pomodoro & Ambient Soundboard</title>
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons for Beautiful Controls -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body class="mode-focus">
+  <!-- Dynamic Fluid Aurora Background Rings -->
+  <div class="aurora-container">
+    <div class="aurora-blob blob-1"></div>
+    <div class="aurora-blob blob-2"></div>
+    <div class="aurora-blob blob-3"></div>
+  </div>
+
+  <div class="app-container">
+    <!-- Main Glassmorphic Dashboard Card -->
+    <main class="dashboard-card">
+      
+      <!-- Card Header -->
+      <header class="app-header">
+        <div class="logo">
+          <i class="fa-solid fa-hourglass-half logo-icon"></i>
+          <h1>琉璃番茄钟 <span>ZenSpace</span></h1>
+        </div>
+        <div class="header-controls">
+          <button id="btn-mute-all" class="control-icon-btn" title="一键静音">
+            <i class="fa-solid fa-volume-high"></i>
+          </button>
+          <button id="btn-reset-data" class="control-icon-btn" title="重置今日统计">
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Grid Layout for Timer & Ambient Soundboard -->
+      <div class="dashboard-grid">
+        
+        <!-- Left Column: Timer & Controls -->
+        <section class="timer-section">
+          <!-- Timer Tab Navigation -->
+          <nav class="mode-nav">
+            <button class="mode-tab active" data-mode="focus">
+              <i class="fa-solid fa-brain"></i> 专注
+            </button>
+            <button class="mode-tab" data-mode="short-break">
+              <i class="fa-solid fa-mug-hot"></i> 短休
+            </button>
+            <button class="mode-tab" data-mode="long-break">
+              <i class="fa-solid fa-couch"></i> 长休
+            </button>
+          </nav>
+
+          <!-- Circular SVG Countdown Progress Container -->
+          <div class="timer-display-container">
+            <svg class="progress-ring" width="280" height="280">
+              <circle class="progress-ring-bg" stroke="rgba(255, 255, 255, 0.05)" stroke-width="8" fill="transparent" r="120" cx="140" cy="140" />
+              <circle id="progress-indicator" class="progress-ring-bar" stroke="var(--accent-color)" stroke-width="8" stroke-linecap="round" fill="transparent" r="120" cx="140" cy="140" />
+            </svg>
+            <div class="timer-text-content">
+              <div id="timer-countdown" class="countdown-digits">25:00</div>
+              <div id="timer-status" class="countdown-status">专注于当下</div>
+            </div>
+          </div>
+
+          <!-- Timer Actions Buttons -->
+          <div class="timer-actions">
+            <button id="btn-toggle-timer" class="btn btn-primary" title="开始/暂停">
+              <i class="fa-solid fa-play"></i> <span>开始</span>
+            </button>
+            <button id="btn-skip-timer" class="btn btn-secondary" title="跳过此阶段">
+              <i class="fa-solid fa-forward"></i>
+            </button>
+          </div>
+        </section>
+
+        <!-- Right Column: Soundboard & Stats -->
+        <section class="controls-section">
+          <!-- Ambient Soundboard Panel -->
+          <div class="glass-subcard soundboard-panel">
+            <h2><i class="fa-solid fa-sliders-h section-icon"></i> 环境氛围混音</h2>
+            <div class="soundboard-grid">
+              
+              <!-- Track: Rain -->
+              <div class="sound-track" data-track="rain">
+                <div class="track-header">
+                  <div class="track-info">
+                    <i class="fa-solid fa-cloud-showers-heavy track-icon"></i>
+                    <span>深山落雨</span>
+                  </div>
+                  <button class="track-toggle" aria-label="播放雨声">
+                    <i class="fa-solid fa-play"></i>
+                  </button>
+                </div>
+                <div class="slider-wrapper">
+                  <input type="range" class="sound-slider" min="0" max="100" value="50" aria-label="音量">
+                  <div class="slider-progress" style="width: 50%;"></div>
+                </div>
+              </div>
+
+              <!-- Track: Campfire -->
+              <div class="sound-track" data-track="campfire">
+                <div class="track-header">
+                  <div class="track-info">
+                    <i class="fa-solid fa-fire track-icon"></i>
+                    <span>林中篝火</span>
+                  </div>
+                  <button class="track-toggle" aria-label="播放篝火声">
+                    <i class="fa-solid fa-play"></i>
+                  </button>
+                </div>
+                <div class="slider-wrapper">
+                  <input type="range" class="sound-slider" min="0" max="100" value="50" aria-label="音量">
+                  <div class="slider-progress" style="width: 50%;"></div>
+                </div>
+              </div>
+
+              <!-- Track: Forest Wind -->
+              <div class="sound-track" data-track="wind">
+                <div class="track-header">
+                  <div class="track-info">
+                    <i class="fa-solid fa-wind track-icon"></i>
+                    <span>松涛微风</span>
+                  </div>
+                  <button class="track-toggle" aria-label="播放风声">
+                    <i class="fa-solid fa-play"></i>
+                  </button>
+                </div>
+                <div class="slider-wrapper">
+                  <input type="range" class="sound-slider" min="0" max="100" value="50" aria-label="音量">
+                  <div class="slider-progress" style="width: 50%;"></div>
+                </div>
+              </div>
+
+              <!-- Track: Deep Space -->
+              <div class="sound-track" data-track="space">
+                <div class="track-header">
+                  <div class="track-info">
+                    <i class="fa-solid fa-user-astronaut track-icon"></i>
+                    <span>深空冥想</span>
+                  </div>
+                  <button class="track-toggle" aria-label="播放太空低鸣">
+                    <i class="fa-solid fa-play"></i>
+                  </button>
+                </div>
+                <div class="slider-wrapper">
+                  <input type="range" class="sound-slider" min="0" max="100" value="50" aria-label="音量">
+                  <div class="slider-progress" style="width: 50%;"></div>
+                </div>
+              </div>
+
+              <!-- Track: Keyboard Clicks -->
+              <div class="sound-track" data-track="keyboard">
+                <div class="track-header">
+                  <div class="track-info">
+                    <i class="fa-solid fa-keyboard track-icon"></i>
+                    <span>机械打字</span>
+                  </div>
+                  <button class="track-toggle" aria-label="播放键盘音">
+                    <i class="fa-solid fa-play"></i>
+                  </button>
+                </div>
+                <div class="slider-wrapper">
+                  <input type="range" class="sound-slider" min="0" max="100" value="30" aria-label="音量">
+                  <div class="slider-progress" style="width: 30%;"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Stats & Analytics Panel -->
+          <div class="glass-subcard stats-panel">
+            <div class="stats-header">
+              <h2><i class="fa-solid fa-chart-simple section-icon"></i> 专注统计</h2>
+              <span class="today-counter">今日已专注: <strong id="today-count">0</strong> 番茄</span>
+            </div>
+            <div class="stats-chart-container">
+              <!-- Inline Dynamic SVG Chart -->
+              <svg id="weekly-chart" class="weekly-chart" viewBox="0 0 420 120" width="100%" height="100%">
+                <!-- Grid lines and Chart will be rendered here dynamically -->
+              </svg>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Audio scripts & Application Entrance -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
