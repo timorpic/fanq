@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnResetData = document.getElementById('btn-reset-data');
   const todayCountDisplay = document.getElementById('today-count');
   const weeklyChartSvg = document.getElementById('weekly-chart');
+  const breathingCircle = document.getElementById('breathing-circle');
 
   // --- Initializing Circular Progress Ring Styles ---
   if (progressRing) {
@@ -53,6 +54,40 @@ document.addEventListener('DOMContentLoaded', () => {
     renderWeeklyChart(weeklyChartSvg);
   }
   updateStatsUI();
+
+  // --- Breathing Guide Interval Manager ---
+  let breathingInterval = null;
+  
+  function startBreathingGuide() {
+    if (breathingInterval) clearInterval(breathingInterval);
+    if (breathingCircle) breathingCircle.classList.add('active-breath');
+    
+    let state = 0; // 0: inhale, 1: exhale
+    const breatheTexts = ['吸气...', '呼气...'];
+    
+    if (timerStatus) {
+      timerStatus.textContent = breatheTexts[state];
+      timerStatus.style.color = 'var(--accent-color)';
+    }
+
+    breathingInterval = setInterval(() => {
+      state = (state + 1) % 2;
+      if (timerStatus) {
+        timerStatus.textContent = breatheTexts[state];
+      }
+    }, 4000); // 4 seconds inhale, 4 seconds exhale
+  }
+
+  function stopBreathingGuide() {
+    if (breathingInterval) {
+      clearInterval(breathingInterval);
+      breathingInterval = null;
+    }
+    if (breathingCircle) breathingCircle.classList.remove('active-breath');
+    if (timerStatus) {
+      timerStatus.style.color = '';
+    }
+  }
 
   // --- Timer Instantiation ---
   const timer = new PomodoroTimer({
@@ -91,8 +126,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
       
-      // 3. Set header subtitle text
-      if (timerStatus) timerStatus.textContent = STATUS_TEXTS[mode];
+      // 3. Set header subtitle text & trigger breathing guide
+      if (mode === TIMER_MODES.FOCUS) {
+        stopBreathingGuide();
+        if (timerStatus) timerStatus.textContent = STATUS_TEXTS[mode];
+      } else {
+        startBreathingGuide();
+      }
       
       // 4. Reset Toggle button text and icon back to initial "Play"
       resetToggleBtnUI();

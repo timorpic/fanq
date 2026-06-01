@@ -22,7 +22,8 @@ const synthTracks = {
   campfire: { node: null, gainNode: null, active: false, volume: 0.5 },
   wind: { node: null, gainNode: null, active: false, volume: 0.5 },
   space: { node: null, gainNode: null, active: false, volume: 0.5 },
-  keyboard: { node: null, gainNode: null, active: false, volume: 0.3 }
+  keyboard: { node: null, gainNode: null, active: false, volume: 0.3 },
+  lofi: { node: null, gainNode: null, active: false, volume: 0.4 }
 };
 
 let isMutedAll = false;
@@ -326,6 +327,112 @@ export function playCompletionBell() {
 }
 
 /**
+ * 6. ZEN LOFI SYNTHESIZER (Infinite procedural melody and chords)
+ */
+function startLofiSynth(ctx, targetNode) {
+  let active = true;
+  let chordIndex = 0;
+
+  // Create delay node for ambient echo
+  const delay = ctx.createDelay();
+  delay.delayTime.setValueAtTime(0.4, ctx.currentTime);
+
+  const feedback = ctx.createGain();
+  feedback.gain.setValueAtTime(0.35, ctx.currentTime);
+
+  delay.connect(feedback);
+  feedback.connect(delay);
+  delay.connect(targetNode);
+
+  // Soothing chord progression
+  const progressions = [
+    [130.81, 164.81, 196.00, 246.94], // Cmaj7
+    [110.00, 130.81, 164.81, 196.00], // Am7
+    [87.31, 130.81, 174.61, 220.00],  // Fmaj7
+    [98.00, 146.83, 196.00, 246.94]   // G7
+  ];
+
+  const activeOscs = [];
+
+  // Play slow chord pads
+  function playChordPad() {
+    if (!active) return;
+    const now = ctx.currentTime;
+    const notes = progressions[chordIndex];
+    chordIndex = (chordIndex + 1) % progressions.length;
+
+    notes.forEach(f => {
+      const osc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const gainNode = ctx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(f, now);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(240, now);
+
+      gainNode.gain.setValueAtTime(0, now);
+      gainNode.gain.linearRampToValueAtTime(0.045, now + 2.0);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 7.8);
+
+      osc.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(targetNode);
+
+      osc.start(now);
+      osc.stop(now + 8.0);
+      activeOscs.push(osc);
+    });
+
+    setTimeout(playChordPad, 8000);
+  }
+
+  // Play random pentatonic chimes
+  const melodyScale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25]; // C pentatonic
+
+  function playMelodyChime() {
+    if (!active) return;
+    const now = ctx.currentTime;
+    const note = melodyScale[Math.floor(Math.random() * melodyScale.length)];
+
+    const osc = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(note, now);
+
+    // Warm envelope
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.06, now + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 2.5);
+
+    osc.connect(gainNode);
+    gainNode.connect(targetNode);
+    gainNode.connect(delay); // route through echo filter
+
+    osc.start(now);
+    osc.stop(now + 3.0);
+    activeOscs.push(osc);
+
+    const delayTime = 2500 + Math.random() * 2500;
+    setTimeout(playMelodyChime, delayTime);
+  }
+
+  playChordPad();
+  setTimeout(playMelodyChime, 1500);
+
+  return {
+    stop: () => {
+      active = false;
+      activeOscs.forEach(o => {
+        try { o.stop(); } catch(e) {}
+      });
+    }
+  };
+}
+
+/**
  * Hook up global physical keyboard event listener
  */
 function initKeyboardListener() {
@@ -382,6 +489,8 @@ export function toggleTrack(trackName) {
       track.node = startWindSynth(ctx, track.gainNode);
     } else if (trackName === 'space') {
       track.node = startSpaceSynth(ctx, track.gainNode);
+    } else if (trackName === 'lofi') {
+      track.node = startLofiSynth(ctx, track.gainNode);
     }
   }
 

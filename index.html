@@ -64,6 +64,8 @@
 
           <!-- Circular SVG Countdown Progress Container -->
           <div class="timer-display-container">
+            <!-- Glowing background breathing guide -->
+            <div id="breathing-circle" class="breathing-circle"></div>
             <svg class="progress-ring" width="280" height="280">
               <circle class="progress-ring-bg" stroke="rgba(255, 255, 255, 0.05)" stroke-width="8" fill="transparent" r="120" cx="140" cy="140" />
               <circle id="progress-indicator" class="progress-ring-bar" stroke="var(--accent-color)" stroke-width="8" stroke-linecap="round" fill="transparent" r="120" cx="140" cy="140" />
@@ -174,6 +176,23 @@
                 <div class="slider-wrapper">
                   <input type="range" class="sound-slider" min="0" max="100" value="30" aria-label="音量">
                   <div class="slider-progress" style="width: 30%;"></div>
+                </div>
+              </div>
+
+              <!-- Track: Zen Lofi -->
+              <div class="sound-track" data-track="lofi">
+                <div class="track-header">
+                  <div class="track-info">
+                    <i class="fa-solid fa-music track-icon"></i>
+                    <span>禅意 Lofi</span>
+                  </div>
+                  <button class="track-toggle" aria-label="播放禅意音乐">
+                    <i class="fa-solid fa-play"></i>
+                  </button>
+                </div>
+                <div class="slider-wrapper">
+                  <input type="range" class="sound-slider" min="0" max="100" value="40" aria-label="音量">
+                  <div class="slider-progress" style="width: 40%;"></div>
                 </div>
               </div>
 

@@ -703,3 +703,48 @@ body {
     font-size: 3.2rem;
   }
 }
+
+/* ==========================================================================
+   BREATHING COACH STYLE AND KEYFRAMES
+   ========================================================================== */
+.breathing-circle {
+  position: absolute;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.15) 0%, rgba(var(--accent-rgb), 0.02) 70%);
+  border: 1px solid rgba(var(--accent-rgb), 0.1);
+  box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.05);
+  z-index: 1;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.5s ease, border-color 0.5s ease, background 0.5s ease;
+  pointer-events: none;
+}
+
+/* Show breathing circle only during break modes */
+body.mode-short-break .breathing-circle,
+body.mode-long-break .breathing-circle {
+  opacity: 1;
+}
+
+/* Class to trigger active breath pulse */
+.breathing-circle.active-breath {
+  animation: breathe-pulse 8s infinite ease-in-out;
+}
+
+@keyframes breathe-pulse {
+  0%, 100% {
+    transform: scale(0.85);
+    background: radial-gradient(circle, rgba(var(--accent-rgb), 0.1) 0%, rgba(var(--accent-rgb), 0.01) 70%);
+    box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.03);
+    border-color: rgba(var(--accent-rgb), 0.08);
+  }
+  50% {
+    transform: scale(1.15);
+    background: radial-gradient(circle, rgba(var(--accent-rgb), 0.28) 0%, rgba(var(--accent-rgb), 0.05) 70%);
+    box-shadow: 0 0 50px rgba(var(--accent-rgb), 0.2);
+    border-color: rgba(var(--accent-rgb), 0.35);
+  }
+}
+
